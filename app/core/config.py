@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     SMTP_PORT: int
     EMAIL_FROM: str
     EMAIL_PASSWORD: str
+    ALERT_EMAIL: str
     
     # Logging
     LOG_FILE: str = "logs/server.log"

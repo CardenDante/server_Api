@@ -38,7 +38,7 @@ async def send_status_report(stats: dict) -> bool:
     try:
         msg = MIMEMultipart()
         msg['From'] = settings.EMAIL_FROM
-        msg['To'] = settings.EMAIL_FROM
+        msg['To'] = settings.ALERT_EMAIL
         msg['Subject'] = f"Server Status Report - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
         
         body = f"""

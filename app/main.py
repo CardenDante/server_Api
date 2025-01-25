@@ -6,7 +6,7 @@ from app.core.config import settings
 from app.middleware.auth import AuthMiddleware
 from app.middleware.logging import LoggingMiddleware
 from app.middleware.rate_limit import RateLimitMiddleware
-from app.api.routes import server, nginx, logs, auth
+from app.api.routes import server, nginx, logs, auth, monitoring  
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -32,6 +32,7 @@ app.include_router(auth.router, prefix=settings.API_V1_STR)
 app.include_router(server.router, prefix=settings.API_V1_STR)
 app.include_router(nginx.router, prefix=settings.API_V1_STR)
 app.include_router(logs.router, prefix=settings.API_V1_STR)
+app.include_router(monitoring.router, prefix=settings.API_V1_STR)
 
 @app.get("/")
 async def root():
