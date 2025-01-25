@@ -1,3 +1,4 @@
+# docker-compose.yml
 version: '3.8'
 
 services:
@@ -10,10 +11,12 @@ services:
       - ./app:/app/app
       - ./logs:/app/logs
       - ./ssl:/app/ssl
+      - /var/run/docker.sock:/var/run/docker.sock  # Docker socket for container management
+      - /var/log:/host/var/log:ro  # Host logs access
     env_file:
       - .env
+    privileged: true  # Required for system monitoring
     restart: unless-stopped
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
   nginx:
     image: nginx:alpine
