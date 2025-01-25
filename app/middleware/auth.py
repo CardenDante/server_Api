@@ -1,7 +1,7 @@
 # app/middleware/auth.py
 from fastapi import Request, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from app.core.security import verify_api_key
+from app.core.config import settings
 import time
 from app.utils.logger import logger
 
@@ -9,18 +9,24 @@ security = HTTPBearer()
 
 class AuthMiddleware:
     async def __call__(self, request: Request, call_next):
-        start_time = time.time()
+        public_paths = [
+            f"{settings.API_V1_STR}/auth/token",
+            "/",
+            "/docs",
+            "/openapi.json",
+            f"{settings.API_V1_STR}/openapi.json",
+            "/redoc",
+            "/favicon.ico",
+            "/docs/oauth2-redirect"
+        ]
         
-        # Skip auth for login route
-        if request.url.path == f"{request.app.prefix}/auth/token":
-            response = await call_next(request)
-            return response
+        if any(request.url.path.startswith(path) for path in public_paths):
+            return await call_next(request)
             
         try:
-            credentials: HTTPAuthorizationCredentials = await security(request)
-            # Verify token or API key here
+            credentials = await security(request)
             if not credentials:
-                raise HTTPException(status_code=403, detail="Invalid authentication")
+                raise HTTPException(status_code=403)
                 
         except HTTPException:
             raise
@@ -29,7 +35,5 @@ class AuthMiddleware:
             raise HTTPException(status_code=403, detail="Invalid authentication")
 
         response = await call_next(request)
-        process_time = time.time() - start_time
-        response.headers["X-Process-Time"] = str(process_time)
-        
+        response.headers["X-Process-Time"] = str(time.time() - start_time)
         return response
