@@ -10,7 +10,9 @@ from app.api.routes import server, nginx, logs, auth, monitoring
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
-    openapi_url=f"{settings.API_V1_STR}/openapi.json"
+    openapi_url=f"{settings.API_V1_STR}/openapi.json",
+    docs_url="/docs",
+    redoc_url="/redoc"
 )
 
 # Add middlewares
@@ -28,7 +30,7 @@ app.add_middleware(
 )
 
 # Include routers
-app.include_router(auth.router, prefix=settings.API_V1_STR)
+app.include_router(auth.router)
 app.include_router(server.router, prefix=settings.API_V1_STR)
 app.include_router(nginx.router, prefix=settings.API_V1_STR)
 app.include_router(logs.router, prefix=settings.API_V1_STR)
